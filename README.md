@@ -1,1 +1,1 @@
-# https-naitiksharma.github.io
+# https-PRIMESCOPE.github.io
