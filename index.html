@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Scope News - Your Daily Dose of News</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa; /* Lighter background */
+            color: #212529; /* Darker text for better contrast */
+        }
+        .header-bg {
+            background-color: #d62828; /* Prime Scope News Red */
+            background-image: linear-gradient(to right, #d62828, #a31a1a); /* Subtle gradient */
+        }
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem; /* More padding */
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 0;
+            height: 3px;
+            background-color: white;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+        .footer-bg {
+            background-color: #1a202c; /* Darker footer */
+        }
+        .news-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border-radius: 1rem; /* More rounded corners */
+            overflow: hidden;
+            background-color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
+        }
+        .news-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* More pronounced hover shadow */
+        }
+        .btn-primary {
+            background-color: #d62828;
+            background-image: linear-gradient(to right, #d62828, #a31a1a);
+            color: white;
+            padding: 0.85rem 2rem; /* Larger buttons */
+            border-radius: 0.75rem; /* More rounded */
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .btn-primary:hover {
+            background-image: linear-gradient(to right, #a31a1a, #d62828);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background-color: #007bff; /* Blue for secondary action */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-secondary:hover {
+            background-color: #0056b3;
+        }
+        .logo-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem; /* Large and prominent */
+            font-weight: 700;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.05em;
+        }
+        .hero-section {
+            background-color: #e9ecef; /* Light grey background for hero */
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem; /* Larger, more impactful title */
+            line-height: 1.2;
+            color: #212529;
+        }
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+        .section-heading {
+            font-family: 'Playfair Display', serif;
+            color: #212529;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 80px;
+            height: 4px;
+            background-color: #d62828;
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .summary-content {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #555;
+            background-color: #f0f8ff; /* Light blue background for summary */
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333;
+        }
+        .modal-body h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+            color: #d62828;
+        }
+        .modal-body p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: #444;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Header -->
+    <header class="header-bg shadow-xl py-4 sticky top-0 z-50">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between px-4">
+            <!-- Logo Section - Replaced with text -->
+            <div class="mb-4 md:mb-0 logo-container">
+                <span class="logo-text">Prime Scope News</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="w-full md:w-auto">
+                <ul class="flex flex-wrap justify-center md:space-x-4 text-white text-lg font-semibold">
+                    <li><a href="#home" class="nav-link px-3 py-2 active">Home</a></li>
+                    <li><a href="#entertainment" class="nav-link px-3 py-2">Entertainment</a></li>
+                    <li><a href="#sports" class="nav-link px-3 py-2">Sports</a></li>
+                    <li><a href="#business" class="nav-link px-3 py-2">Business</a></li>
+                    <li><a href="#technology" class="nav-link px-3 py-2">Technology</a></li>
+                    <li><a href="#world" class="nav-link px-3 py-2">World</a></li>
+                    <li><a href="#opinion" class="nav-link px-3 py-2">Opinion</a></li>
+                    <li><a href="#about-us" class="nav-link px-3 py-2">About Us</a></li> <!-- New About Us link -->
+                    <li><a href="#terms-of-service" class="nav-link px-3 py-2">Terms of Service</a></li>
+                    <li><a href="#privacy-policy" class="nav-link px-3 py-2">Privacy Policy</a></li>
+                    <li><a href="#contact" class="nav-link px-3 py-2">Contact Us</a></li>
+                </ul>
+            </nav>
+
+            <!-- Social Icons -->
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 text-white">
+                <a href="https://www.youtube.com/channel/UCJahNnx09HHyW5Yc5A-PvqA" target="_blank" class="hover:text-gray-300" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.instagram.com/primescope_official/" target="_blank" class="hover:text-gray-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto my-10 px-4">
+
+        <!-- Hero Section - Featured News: Ahmedabad Plane Crash Review -->
+        <section id="hero" class="mb-16 hero-section p-8 md:p-12 flex flex-col items-center gap-8">
+            <!-- Removed image from hero section to give text full width -->
+            <div class="w-full text-center">
+                <span class="text-sm font-bold text-red-600 uppercase tracking-wider mb-2 block">Breaking News | July 18, 2025</span>
+                <h1 class="hero-title font-extrabold mb-4">Ahmedabad Plane Crash: Fuel Cutoff Mystery at Heart of Preliminary Report</h1>
+                <p class="text-gray-700 text-lg mb-6 leading-relaxed" id="hero-article-content">
+                    Ahmedabad Plane Crash: What Really Happened in the Cockpit?<br>
+                    By Naitik Sharma<br><br>
+                    A wave of shock swept through the nation when a domestic passenger aircraft crashed during its final approach to Ahmedabad airport last week. Initial speculation pointed toward technical malfunction, sudden weather turbulence, or even a possible bird strike. Social media was flooded with questions—and conspiracy theories. But now, the Government of India has released its preliminary investigation report, shedding light on what truly went wrong.<br><br>
+                    According to the Directorate General of Civil Aviation (DGCA), the crash was caused by human error compounded by miscommunication in the cockpit. The black box recording reveals a tense final minute between the pilot and co-pilot. The aircraft had been cleared for landing on Runway 23, but visibility dropped sharply due to unexpected crosswinds. The pilot reportedly said, “I think we should go around,” to which the co-pilot replied, “We’re stable, let's proceed.” That moment of indecision, lasting barely four seconds, sealed the fate of the flight.<br><br>
+                    The report indicates that there was no mechanical failure, and all systems were functioning normally until impact. The confusion stemmed from a breakdown in Crew Resource Management (CRM), which is crucial during such high-pressure moments. Eyewitnesses from nearby areas recalled hearing a loud thud followed by plumes of smoke. Emergency services responded within minutes, saving many lives despite the tragic loss of a few passengers and crew members.<br><br>
+                    The government has now issued strict directives to all domestic airlines, emphasizing simulator-based crosswind training and mandatory refresher courses on cockpit coordination. As investigations continue, one thing is clear: this was not a machine failure, but a human mistake made under pressure—a painful reminder of how every second matters in aviation.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                    <button class="btn-primary inline-block" onclick="openArticleModal('Ahmedabad Plane Crash: Fuel Cutoff Mystery at Heart of Preliminary Report', document.getElementById('hero-article-content').innerHTML)">Read Full Story &rarr;</button>
+                    <!-- Summarize button removed as requested due to functionality issues -->
+                </div>
+                <div id="hero-summary-output" class="summary-content hidden"></div>
+            </div>
+        </section>
+
+        <!-- Latest Headlines Section -->
+        <section id="home" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Latest Headlines</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- News Card 1: Monsoon Rains -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/5F9EA0/FFFFFF?text=Monsoon+Rains" alt="Monsoon Rains Image" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">INDIA | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Monsoon Rains Bring Relief, But Also Flooding Concerns Across Northern India</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="home-article-1-content">Heavy monsoon showers have brought much-needed respite from the heat, but authorities issue warnings for potential flooding in low-lying areas, urging residents to take precautions. Several states are on high alert, with disaster management teams deployed to assist affected communities. Farmers, however, welcome the rains, which are crucial for the kharif crop season. Experts predict that while the initial downpour is beneficial, sustained heavy rainfall could lead to challenges in urban drainage and rural infrastructure, necessitating proactive measures from local administrations.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Monsoon Rains Bring Relief, But Also Flooding Concerns Across Northern India', document.getElementById('home-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="home-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- News Card 2: Rural Employment -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/6A5ACD/FFFFFF?text=Rural+Employment" alt="Rural Employment Image" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">NATIONAL | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">New Government Initiative Aims to Boost Rural Employment</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="home-article-2-content">A comprehensive program focusing on skill development and infrastructure projects is launched to create jobs in rural areas nationwide, targeting sustainable economic growth. The initiative includes vocational training centers and support for small-scale industries to empower local communities. The government aims to reduce urban migration and improve the quality of life in villages through this multi-faceted approach, with initial pilot projects showing promising results in several districts.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('New Government Initiative Aims to Boost Rural Employment', document.getElementById('home-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="home-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- News Card 3: Cultural Festival -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/DAA520/000000?text=Cultural+Festival" alt="Cultural Festival Image" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">CULTURE | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Cultural Festival Kicks Off, Showcasing Diverse Indian Heritage</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="home-article-3-content">A week-long festival featuring traditional music, dance, and crafts begins, attracting artists and visitors from across the country to celebrate India's rich heritage. The event aims to promote cultural exchange and preserve traditional art forms, with special workshops and performances planned to engage younger generations and foster appreciation for indigenous arts.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Cultural Festival Kicks Off, Showcasing Diverse Indian Heritage', document.getElementById('home-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="home-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Entertainment Section -->
+        <section id="entertainment" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Entertainment</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Entertainment News 1: Bollywood Blockbuster -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/FFD700/000000?text=Bollywood+Hit" alt="Bollywood Movie Premiere" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">FILM | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Bollywood Blockbuster 'Eternal Love' Breaks Opening Weekend Records</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="ent-article-1-content">The highly anticipated romantic drama has captivated audiences worldwide, setting new box office milestones across India and internationally. Critics praise its compelling storyline and stellar performances, making it a must-watch for film enthusiasts. The film's success is attributed to its fresh take on traditional romance and strong word-of-mouth.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Bollywood Blockbuster \'Eternal Love\' Breaks Opening Weekend Records', document.getElementById('ent-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="ent-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Entertainment News 2: Priya Sharma Album -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/8A2BE2/FFFFFF?text=New+Album" alt="Music Album Release" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">MUSIC | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Rising Star Priya Sharma Announces Highly Anticipated Debut Album Release</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="ent-article-2-content">The young singer-songwriter, known for her soulful voice and unique style, is set to release her first album, generating immense buzz in the music industry. Fans are eagerly awaiting the new tracks, promising a fresh sound for the pop genre. Her lead single has already topped charts, hinting at a successful album launch.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Rising Star Priya Sharma Announces Highly Anticipated Debut Album Release', document.getElementById('ent-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="ent-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Entertainment News 3: Raj Kapoor Award -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/FF6347/FFFFFF?text=Lifetime+Award" alt="Celebrity Award" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">CELEBRITY | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Veteran Actor Raj Kapoor Honored with Prestigious Lifetime Achievement Award</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="ent-article-3-content">In a star-studded ceremony, the legendary actor was celebrated for his immense contributions and enduring legacy in Indian cinema over five remarkable decades. The award recognizes his iconic roles and influence on generations of filmmakers, highlighting his impact on the industry and inspiring future talent.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Veteran Actor Raj Kapoor Honored with Prestigious Lifetime Achievement Award', document.getElementById('ent-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="ent-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sports Section -->
+        <section id="sports" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Sports</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Sports News 1: Cricket Series -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/008000/FFFFFF?text=Cricket+Win" alt="Cricket Championship" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">CRICKET | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">India Clinches Historic Cricket Series Victory Against Arch-Rivals Australia</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="sports-article-1-content">In a thrilling finale, the Indian cricket team secured a decisive series win, showcasing exceptional performance and teamwork against their long-standing rivals. The victory marks a significant milestone in the team's recent history, with key players delivering standout performances under pressure, solidifying their position in international cricket.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('India Clinches Historic Cricket Series Victory Against Arch-Rivals Australia', document.getElementById('sports-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="sports-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Sports News 2: Rohan Singh Record -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/FF4500/FFFFFF?text=New+Record" alt="Sprinter New Record" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">ATHLETICS | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Young Sprinter Rohan Singh Sets New National Record in 100-Meter Dash</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="sports-article-2-content">The 19-year-old athlete stunned spectators by breaking the long-standing national record in the 100-meter dash at the national championships, marking a new era in Indian athletics. His performance has garnered significant attention from coaches and fans, with many touting him as a future Olympic hopeful, bringing new excitement to the track and field scene.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Young Sprinter Rohan Singh Sets New National Record in 100-Meter Dash', document.getElementById('sports-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="sports-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Sports News 3: Premier League -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/1E90FF/FFFFFF?text=Football+Season" alt="Football Season Kickoff" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">FOOTBALL | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Premier League Football Season Kicks Off with Exciting Matches Across Nation</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="sports-article-3-content">Fans rejoice as the new football season begins, promising intense competition, captivating matches, and unexpected upsets across the country's top league. Teams are eager to prove their mettle in the opening fixtures, with new signings and tactical changes adding to the anticipation for a thrilling season ahead, engaging millions of passionate supporters.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Premier League Football Season Kicks Off with Exciting Matches Across Nation', document.getElementById('sports-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="sports-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Business Section -->
+        <section id="business" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Business</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Business News 1: Rupee Strengthens -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/4682B4/FFFFFF?text=Rupee+Strength" alt="Stock Market" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">FINANCE | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Indian Rupee Strengthens Against US Dollar Amidst Positive Economic Data</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="biz-article-1-content">The Indian currency saw a significant gain, reflecting growing investor confidence and robust economic indicators released by the central bank. This positive trend is attributed to strong foreign investments and improved trade balances, signaling a resilient economy despite global headwinds. Analysts foresee continued stability in the near term.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Indian Rupee Strengthens Against US Dollar Amidst Positive Economic Data', document.getElementById('biz-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="biz-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Business News 2: EV Sales -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/B8860B/FFFFFF?text=EV+Sales" alt="New Venture" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">AUTOMOTIVE | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Automotive Sector Sees Surge in Electric Vehicle Sales Nationwide</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="biz-article-2-content">Demand for electric vehicles continues to rise, driven by government incentives and increasing environmental awareness among consumers, reshaping the auto market. Manufacturers are ramping up production to meet the growing consumer interest, with new models and charging infrastructure developments further fueling this rapid adoption across urban and rural landscapes.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Automotive Sector Sees Surge in Electric Vehicle Sales Nationwide', document.getElementById('biz-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="biz-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Business News 3: Infrastructure Project -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/20B2AA/FFFFFF?text=Infrastructure+Project" alt="Economy" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">INFRASTRUCTURE | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Major Infrastructure Project Launched to Boost Connectivity & Trade</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="biz-article-3-content">A new multi-billion dollar project is underway to develop highways and rail networks, aiming to enhance trade efficiency and improve travel across key regions. The project is expected to create thousands of jobs and stimulate local economies, fostering regional development and integrating remote areas into the national economic framework, promising long-term benefits.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Major Infrastructure Project Launched to Boost Connectivity & Trade', document.getElementById('biz-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="biz-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technology Section -->
+        <section id="technology" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Technology</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Technology News 1: Quantum Computing -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/800080/FFFFFF?text=Quantum+Tech" alt="New Gadget" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">RESEARCH | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Quantum Computing Breakthrough Promises New Era of Computation</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="tech-article-1-content">Researchers announce a significant advancement in quantum computing, potentially revolutionizing fields from medicine to artificial intelligence with unprecedented processing power. This breakthrough could lead to faster drug discovery and more secure communication, paving the way for technologies previously thought to be decades away. The implications for data processing and complex problem-solving are immense.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Quantum Computing Breakthrough Promises New Era of Computation', document.getElementById('tech-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="tech-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Technology News 2: Cybersecurity Framework -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/00CED1/000000?text=Cybersecurity" alt="Cybersecurity" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">SECURITY | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">New Cybersecurity Framework to Protect Critical National Infrastructure</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="tech-article-2-content">The government unveils a robust new framework designed to safeguard essential services and sensitive data from increasingly sophisticated cyber threats and attacks. This initiative includes enhanced monitoring and rapid response protocols, as well as public-private partnerships to strengthen national digital defenses against evolving global threats, ensuring data integrity and privacy.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('New Cybersecurity Framework to Protect Critical National Infrastructure', document.getElementById('tech-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="tech-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Technology News 3: AI Healthcare -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/4B0082/FFFFFF?text=AI+Ethics" alt="AI Ethics" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">HEALTH TECH | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">AI-Powered Healthcare Diagnostics Show Promising Results in Early Detection</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="tech-article-3-content">Artificial intelligence tools are proving highly effective in early disease detection and personalized treatment plans, offering new hope for patient outcomes globally. These systems analyze vast amounts of data to provide accurate diagnoses and treatment recommendations, reducing human error and accelerating the diagnostic process in complex medical cases.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('AI-Powered Healthcare Diagnostics Show Promising Results in Early Detection', document.getElementById('tech-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="tech-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- World Section -->
+        <section id="world" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">World News</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- World News 1: Middle East Peace Talks -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/A52A2A/FFFFFF?text=International+Relations" alt="International Relations" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">DIPLOMACY | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Middle East Peace Talks Resume Amidst Cautious Optimism for Resolution</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="world-article-1-content">Diplomats from key nations have reconvened for crucial discussions, aiming to find a lasting resolution to regional tensions and foster stability. The talks focus on de-escalation strategies and humanitarian aid efforts in conflict zones, with international observers closely monitoring progress and hoping for a breakthrough after years of stalemate.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Middle East Peace Talks Resume Amidst Cautious Optimism for Resolution', document.getElementById('world-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="world-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- World News 2: Global Food Security -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/2F4F4F/FFFFFF?text=Humanitarian+Aid" alt="Humanitarian Aid" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">GLOBAL ISSUES | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Global Food Security Summit Addresses Rising Hunger Concerns Worldwide</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="world-article-2-content">International leaders and organizations meet to strategize on sustainable solutions for ensuring food access and combating rising hunger concerns across vulnerable regions. Discussions include climate-resilient agriculture and efficient distribution systems, aiming to build long-term resilience against food crises and ensure equitable access for all populations.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Global Food Security Summit Addresses Rising Hunger Concerns Worldwide', document.getElementById('world-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="world-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- World News 3: Ancient Civilization -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/5F9EA0/FFFFFF?text=Ancient+Discovery" alt="Politics" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">ARCHAEOLOGY | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">New Discoveries Unearth Ancient Civilization in South American Rainforest</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="world-article-3-content">Archaeologists have made groundbreaking finds deep within the Amazon basin, shedding new light on a previously unknown ancient culture and its complex society. The discovery includes intricate pottery and advanced agricultural systems, challenging previous historical understandings and opening new avenues for research into pre-Columbian history and ecological adaptations.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('New Discoveries Unearth Ancient Civilization in South American Rainforest', document.getElementById('world-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="world-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opinion Section -->
+        <section id="opinion" class="mb-16">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Opinion & Editorials</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Opinion News 1: Youth in Economy -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/9ACD32/000000?text=Youth+Opinion" alt="Opinion Piece" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">ECONOMY | JULY 18, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">The Role of Youth in Shaping India's Future Economy: A Critical Perspective</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="op-article-1-content">An insightful commentary on how the demographic dividend and entrepreneurial spirit of India's youth can drive economic growth and overcome contemporary challenges. The article emphasizes the need for targeted policies to harness this potential, including investments in education, skill development, and fostering an environment conducive to innovation and job creation across various sectors.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('The Role of Youth in Shaping India\'s Future Economy: A Critical Perspective', document.getElementById('op-article-1-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="op-summary-1" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Opinion News 2: Digital Divide -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/DDA0DD/000000?text=Digital+Divide" alt="Editorial" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">SOCIETY | JULY 17, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">Navigating the Digital Divide: Ensuring Equitable Access to Technology for All</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="op-article-2-content">An editorial arguing for robust policy changes and community initiatives to bridge the gap in technological access across all segments of society, fostering inclusivity. It highlights the importance of digital literacy programs and affordable internet access, emphasizing that equitable access to technology is a fundamental right in the modern era, crucial for social and economic mobility.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('Navigating the Digital Divide: Ensuring Equitable Access to Technology for All', document.getElementById('op-article-2-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="op-summary-2" class="summary-content hidden"></div>
+                    </div>
+                </div>
+                <!-- Opinion News 3: AI Ethics -->
+                <div class="news-card">
+                    <img src="https://placehold.co/600x400/F08080/000000?text=Commentary" alt="Commentary" class="w-full h-56 object-cover rounded-t-lg">
+                    <div class="p-6">
+                        <span class="text-xs font-semibold text-gray-500 mb-2 block">ETHICS | JULY 16, 2025</span>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">The Ethics of AI in Creative Industries: A Delicate Balancing Act</h3>
+                        <p class="text-gray-700 text-sm mb-4 leading-relaxed" id="op-article-3-content">An exploration of the ethical considerations and challenges posed by the rapid integration of artificial intelligence in fields like art, music, and writing, and how to navigate them responsibly. The commentary discusses copyright, originality, and the future of human creativity, advocating for a framework that supports innovation while protecting the rights and livelihoods of human artists and creators in an increasingly AI-driven world.</p>
+                        <div class="flex items-center justify-between mt-4">
+                            <button class="text-red-600 hover:underline text-sm font-medium flex items-center" onclick="openArticleModal('The Ethics of AI in Creative Industries: A Delicate Balancing Act', document.getElementById('op-article-3-content').innerHTML)">Read More <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            <!-- Summarize button removed -->
+                        </div>
+                        <div id="op-summary-3" class="summary-content hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section -->
+        <section id="about-us" class="mb-16 bg-white rounded-xl shadow-xl p-8 md:p-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">About Us</h2>
+            <div class="max-w-xl mx-auto text-gray-700 leading-relaxed">
+                <p class="mb-4">PrimeScope News is a digital-first news organization committed to delivering factual, impartial, and comprehensive news coverage across a wide spectrum of subjects including politics, business, technology, world affairs, environment, science, and culture.</p>
+                <p class="mb-4">Headquartered in India with a global perspective, PrimeScope News operates with a commitment to journalistic integrity, editorial independence, and public service. Our mission is to provide accurate and timely information that empowers audiences to make informed decisions in an increasingly complex world.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">We uphold the principles of:</h3>
+                <ul class="list-disc list-inside mb-4 ml-4">
+                    <li class="mb-2"><strong>Accuracy</strong> – We verify every piece of information through reliable sourcing.</li>
+                    <li class="mb-2"><strong>Independence</strong> – We maintain full editorial independence, free from political or commercial influence.</li>
+                    <li class="mb-2"><strong>Fairness</strong> – We present news without bias, with balance and context.</li>
+                    <li class="mb-2"><strong>Transparency</strong> – We are accountable to our readers and uphold open editorial practices.</li>
+                </ul>
+                <p class="mb-4">PrimeScope News is staffed by a team of experienced journalists, editors, researchers, and digital strategists dedicated to producing quality journalism. Our multilingual and multi-platform approach ensures that content is accessible to a diverse global audience.</p>
+                <p class="mb-4">We recognize the role of responsible media in strengthening democracies, informing public opinion, and fostering accountability. Through continuous innovation, rigorous reporting standards, and an unwavering commitment to truth, PrimeScope News strives to be a trusted source in the modern media landscape.</p>
+                <p class="mb-4">For press inquiries, syndication, or editorial partnerships, please contact:</p>
+                <p class="mb-4 text-center text-red-600 font-semibold">📩 contact us at <a href="mailto:primescope.official@gmail.com" class="hover:underline">primescope.official@gmail.com</a></p>
+            </div>
+        </section>
+
+        <!-- Terms of Service Section -->
+        <section id="terms-of-service" class="mb-16 bg-white rounded-xl shadow-xl p-8 md:p-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Terms of Service</h2>
+            <div class="max-w-xl mx-auto text-gray-700 leading-relaxed">
+                <p class="mb-4">Welcome to Prime Scope News. By accessing or using our website, you agree to comply with and be bound by these Terms of Service. Please review them carefully.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">1. Acceptance of Terms</h3>
+                <p class="mb-4">By using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms, as well as our Privacy Policy.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">2. Content Usage</h3>
+                <p class="mb-4">All content provided on Prime Scope News is for informational purposes only. You may not reproduce, distribute, modify, or create derivative works from our content without explicit written permission.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">3. User Conduct</h3>
+                <p class="mb-4">You agree not to use the website for any unlawful purpose or in any way that could harm, disable, or impair the site. This includes, but is not limited to, posting offensive content, spamming, or attempting to gain unauthorized access.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">4. Disclaimer of Warranties</h3>
+                <p class="mb-4">Prime Scope News is provided "as is" without any warranties, express or implied. We do not guarantee the accuracy, completeness, or reliability of any content.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">5. Limitation of Liability</h3>
+                <p class="mb-4">Prime Scope News will not be liable for any damages arising from your use of the website.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">6. Changes to Terms</h3>
+                <p class="mb-4">We reserve the right to modify these Terms at any time. Your continued use of the site after changes signifies your acceptance of the new Terms.</p>
+                <p class="text-sm text-gray-500 mt-6">Last updated: July 18, 2025</p>
+            </div>
+        </section>
+
+        <!-- Privacy Policy Section -->
+        <section id="privacy-policy" class="mb-16 bg-white rounded-xl shadow-xl p-8 md:p-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Privacy Policy</h2>
+            <div class="max-w-xl mx-auto text-gray-700 leading-relaxed">
+                <p class="mb-4">Your privacy is important to us. This Privacy Policy explains how Prime Scope News collects, uses, and protects your personal information.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">1. Information We Collect</h3>
+                <p class="mb-4">We collect information that you voluntarily provide to us, such as your name and email address when you use our contact form. We may also collect non-personal information like browser type and IP address for analytical purposes.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">2. How We Use Your Information</h3>
+                <p class="mb-4">We use the information collected to respond to your inquiries, improve our website, and analyze site usage. We do not sell or rent your personal information to third parties.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">3. Data Security</h3>
+                <p class="mb-4">We implement reasonable security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">4. Third-Party Links</h3>
+                <p class="mb-4">Our website may contain links to third-party sites. We are not responsible for the privacy practices or content of these external sites.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">5. Cookies</h3>
+                <p class="mb-4">We may use cookies to enhance your browsing experience. You can choose to disable cookies through your browser settings, but this may affect website functionality.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">6. Children's Privacy</h3>
+                <p class="mb-4">Our website is not intended for children under 13. We do not knowingly collect personal information from children without parental consent.</p>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">7. Your Consent</h3>
+                <p class="mb-4">By using our website, you consent to the collection and use of your information as described in this Privacy Policy.</p>
+                <p class="text-sm text-gray-500 mt-6">Last updated: July 18, 2025</p>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section id="contact" class="mb-16 bg-white rounded-xl shadow-xl p-8 md:p-12">
+            <h2 class="text-4xl font-bold text-gray-800 mb-10 text-center section-heading">Contact Us</h2>
+            <div class="max-w-xl mx-auto">
+                <p class="text-gray-700 text-center mb-8 text-lg">Have a tip, a question, or feedback? We'd love to hear from you!</p>
+                <form class="space-y-6">
+                    <div>
+                        <label for="name" class="block text-gray-800 text-base font-semibold mb-2">Name:</label>
+                        <input type="text" id="name" name="name" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Your Full Name">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-gray-800 text-base font-semibold mb-2">Email:</label>
+                        <input type="email" id="email" name="email" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="your.email@example.com">
+                    </div>
+                    <div>
+                        <label for="subject" class="block text-gray-800 text-base font-semibold mb-2">Subject:</label>
+                        <input type="text" id="subject" name="subject" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Subject of your message">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-gray-800 text-base font-semibold mb-2">Message:</label>
+                        <textarea id="message" name="message" rows="7" class="shadow-sm appearance-none border border-gray-300 rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" placeholder="Write your message here..."></textarea>
+                    </div>
+                    <div class="flex justify-center">
+                        <button type="submit" class="btn-primary">Send Message</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bg text-white py-10">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+            <!-- About Us -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-red-400">Prime Scope News</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">
+                    Your trusted source for unbiased, in-depth news coverage from around the globe. We strive to deliver timely and accurate information, empowering our readers to stay informed and make sense of the world.
+                </p>
+            </div>
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-red-400">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#home" class="text-gray-400 hover:text-white transition-colors duration-300">Home</a></li>
+                    <li><a href="#entertainment" class="text-gray-400 hover:text-white transition-colors duration-300">Entertainment</a></li>
+                    <li><a href="#sports" class="text-gray-400 hover:text-white transition-colors duration-300">Sports</a></li>
+                    <li><a href="#business" class="text-gray-400 hover:text-white transition-colors duration-300">Business</a></li>
+                    <li><a href="#technology" class="text-gray-400 hover:text-white transition-colors duration-300">Technology</a></li>
+                    <li><a href="#world" class="text-gray-400 hover:text-white transition-colors duration-300">World</a></li>
+                    <li><a href="#opinion" class="text-gray-400 hover:text-white transition-colors duration-300">Opinion</a></li>
+                    <li><a href="#about-us" class="text-gray-400 hover:text-white transition-colors duration-300">About Us</a></li> <!-- New About Us link -->
+                    <li><a href="#terms-of-service" class="text-gray-400 hover:text-white transition-colors duration-300">Terms of Service</a></li>
+                    <li><a href="#privacy-policy" class="text-gray-400 hover:text-white transition-colors duration-300">Privacy Policy</a></li>
+                    <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors duration-300">Contact Us</a></li>
+                </ul>
+            </div>
+            <!-- Connect With Us -->
+            <div>
+                <h3 class="text-xl font-bold mb-4 text-red-400">Connect With Us</h3>
+                <p class="text-gray-400 mb-4">Follow us on social media for the latest updates:</p>
+                <div class="flex justify-center md:justify-start space-x-4 text-2xl">
+                    <a href="https://www.youtube.com/channel/UCJahNnx09HHyW5Yc5A-PvqA" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300" aria-label="YouTube"><i class="fab fa-youtube-square"></i></a>
+                    <a href="https://www.instagram.com/primescope_official/" target="_blank" class="text-gray-400 hover:text-white transition-colors duration-300" aria-label="Instagram"><i class="fab fa-instagram-square"></i></a>
+                </div>
+                <p class="text-gray-400 text-sm mt-4">&copy; 2025 Prime Scope News. All rights reserved.</p>
+                <p class="text-gray-400 text-sm mt-2">Editor-in-Chief: Naitik Sharma</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Article Modal Structure -->
+    <div id="articleModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeArticleModal()">&times;</button>
+            <div class="modal-body">
+                <h2 id="modal-article-title"></h2>
+                <div id="modal-article-content" class="text-gray-700 text-base"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                // Remove active class from all nav links
+                document.querySelectorAll('nav .nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // Add active class to the clicked nav link
+                this.classList.add('active');
+
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80, // Adjust for fixed header height
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Set active class on initial load based on URL hash (if any)
+        window.addEventListener('load', () => {
+            if (window.location.hash) {
+                const initialTargetId = window.location.hash.substring(1);
+                const initialNavLink = document.querySelector(`nav a[href="#${initialTargetId}"]`);
+                if (initialNavLink) {
+                    initialNavLink.classList.add('active');
+                    const targetElement = document.getElementById(initialTargetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            } else {
+                // Default to 'Home' if no hash
+                document.querySelector('nav a[href="#home"]').classList.add('active');
+            }
+        });
+
+        // Optional: Update active nav link on scroll
+        const sections = document.querySelectorAll('main section');
+        const navLinks = document.querySelectorAll('nav .nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100; // Adjust offset
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop && pageYOffset < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        /**
+         * Summarizes an article using the Gemini API.
+         * This function has been removed from active use as requested due to potential environment limitations.
+         * @param {string} articleId The ID of the HTML element containing the article text.
+         * @param {string} summaryOutputId The ID of the HTML element where the summary will be displayed.
+         * @param {HTMLElement} buttonElement The button element that triggered the summary.
+         */
+        async function summarizeArticle(articleId, summaryOutputId, buttonElement) {
+            console.warn("Summarize feature is currently disabled as per user request or due to environment limitations.");
+            const summaryOutputElement = document.getElementById(summaryOutputId);
+            if (summaryOutputElement) {
+                summaryOutputElement.innerHTML = '<p>Summary feature is currently unavailable.</p>';
+                summaryOutputElement.classList.remove('hidden');
+            }
+            // The actual API call logic is commented out or removed from the button's onclick
+            // to reflect the user's request to remove or fix it.
+        }
+
+        // Modal functions
+        function openArticleModal(title, content) {
+            const modal = document.getElementById('articleModal');
+            document.getElementById('modal-article-title').innerHTML = title;
+            document.getElementById('modal-article-content').innerHTML = content;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling background
+        }
+
+        function closeArticleModal() {
+            const modal = document.getElementById('articleModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeArticleModal();
+            }
+        });
+
+        // Close modal when clicking outside content
+        document.getElementById('articleModal').addEventListener('click', (e) => {
+            if (e.target.id === 'articleModal') {
+                closeArticleModal();
+            }
+        });
+
+    </script>
+</body>
+</html>
